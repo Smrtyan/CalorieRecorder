@@ -14,19 +14,20 @@ public class AddCaloriaActivity extends AppCompatActivity {
     SQLiteDatabase db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        db = MainActivity.getDB();
+
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_caloria);
     }
 
     public void btn_updateNewCalorie(View view) {
+        db = MainActivity.getDB();
         DatePicker dp = findViewById(R.id.dp_addnewday);
         EditText et = findViewById(R.id.et_calorie);
         String dayString;
         dayString=""+dp.getYear();
-        dayString=dayString+"/"+(dp.getMonth()+1);
-        dayString= dayString+"/"+dp.getDayOfMonth();
+        dayString=dayString+"-"+String.format("%02d",dp.getMonth()+1);
+        dayString= dayString+"-"+String.format("%02d",dp.getDayOfMonth());
         int calorie = Integer.parseInt(et.getText().toString());
         Log.d("add Calorie",dayString);
         ContentValues values = new ContentValues();
@@ -35,5 +36,6 @@ public class AddCaloriaActivity extends AppCompatActivity {
         db.insert("dayOfCalorie",null,values);
         et.setText("");
         Toast.makeText(getApplicationContext(),"Data added: "+dayString+":"+calorie,Toast.LENGTH_LONG).show();
+        db.close();
     }
 }

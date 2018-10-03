@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     public  final int DB_VERSION =1;
     SQLiteDatabase db;
 
-
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 
 
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 // TODO Auto-generated method stub
-                v.setText(year+"/"+(monthOfYear+1)+"/"+dayOfMonth);
+                v.setText(year+"-"+String.format("%02d",monthOfYear+1)+"-"+String.format("%02d",dayOfMonth));
             }
         }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
 
@@ -54,46 +54,29 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+
         super.onResume();
-        //String whereclause = "height >= ?" + " and height <= ?";
+        GraphView graph = (GraphView) findViewById(R.id.graph);
+        graph.removeAllSeries();
 
-        //  Vector entries = new Vector<String>();
-        //  entries.clear();
+        Date d;
         db  = MainActivity.getDB();
-
         Cursor cursor = db.query("dayOfCalorie",
                 null,
                 null,
                 null,
-                null, null, null);
-
-        int dateCount=0;
-        GraphView graph = (GraphView) findViewById(R.id.graph);;
-        Date d;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
-
+                null, null, "day");
         if (cursor.moveToFirst()) {
             ArrayList<DataPoint> dataPointArrayList = new ArrayList<>();
             try {
                 do {
+
                     String calorie = cursor.getString(cursor.getColumnIndex("calorie"));
                     String day= cursor.getString(cursor.getColumnIndex("day"));
-
-
-                    Calendar calendar = Calendar.getInstance();
-
                     d = simpleDateFormat.parse(day);
-//                    calendar.add(Calendar.DATE, 1);
-
-
-// you can directly pass Date objects to DataPoint-Constructor
-// this will convert the Date to double via Date#getTime()
                     dataPointArrayList.add(new DataPoint(d,Integer.parseInt(calorie)));
+//                    Log.v("db-1",day);
 
-
-
-
-                    //entries.add("" + calorie );
                 } while (cursor.moveToNext());
                 cursor.close();
                 LineGraphSeries<DataPoint> series ;
@@ -122,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
+        db.close();
 
     }
 
