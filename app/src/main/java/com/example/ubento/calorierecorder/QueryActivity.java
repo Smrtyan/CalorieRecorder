@@ -27,7 +27,7 @@ public class QueryActivity extends AppCompatActivity {
         String statDay = intent.getStringExtra("start_day");
         String endDay = intent.getStringExtra("end_day");
         db  = MainActivity.getDB();
-        String whereclause = "day > ?" + " and day < ?";
+        String whereclause = "day > ?" + " and day < ?"+"and isHidden = 0";
         Cursor cursor = db.query("dayOfCalorie",
                 null,
                 whereclause,

@@ -1,14 +1,17 @@
 package com.example.ubento.calorierecorder;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
@@ -29,14 +32,22 @@ public class EditCaloriaActivity extends AppCompatActivity {
      void deleteDataFromTextViewAndDB(TextView tv){
         LinearLayout layout = (LinearLayout) tv.getParent();
         layout.removeView(tv);
+         db = MainActivity.getDB();
+         ContentValues values = new ContentValues();
+         values.put("isHidden",1);
+         String [] array = tv.getText().toString().split(" : ");
+         Toast.makeText(getApplicationContext(),array[0],Toast.LENGTH_LONG).show();
+         db.update("dayOfCalorie",values,"day = ? and calorie = ?",array);
+         db.close();
      }
     @Override
     protected void onResume() {
         super.onResume();
         db = MainActivity.getDB();
+        String WHERE_CLAUSE = "isHidden = 0";
         Cursor cursor = db.query("dayOfCalorie",
                 null,
-                null,
+                WHERE_CLAUSE,
                 null,
                 null, null, "day");
         TextView textView;
@@ -67,9 +78,6 @@ public class EditCaloriaActivity extends AppCompatActivity {
             db.close();
         }
 
-    }
-    void deleteTextView(TextView tv){
-        ((LinearLayout)tv.getParent()).removeView(tv);
     }
 
     public void btn_add(View view) {

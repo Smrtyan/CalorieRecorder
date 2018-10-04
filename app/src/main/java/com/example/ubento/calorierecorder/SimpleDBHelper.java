@@ -34,6 +34,7 @@ public class SimpleDBHelper extends SQLiteOpenHelper {
                 //upgrade logic from 1 to 2
              //   sqLiteDatabase.execSQL(CREATE_DAY_OF_CALORIE_TABLE);
             case 2:
+                sqLiteDatabase.execSQL("alter table "+DAY_OF_CALORIE+" add isHidden default 0;");
                 // upgrade logic from 2 to 3
 
                 break;

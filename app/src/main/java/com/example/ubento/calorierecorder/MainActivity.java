@@ -27,7 +27,7 @@ import java.util.Vector;
 
 public class MainActivity extends AppCompatActivity {
     private static SimpleDBHelper dbHelper;
-    public  final int DB_VERSION =1;
+    public  final int DB_VERSION =3;
     SQLiteDatabase db;
 
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -61,10 +61,11 @@ public class MainActivity extends AppCompatActivity {
 
         Date d;
         db  = MainActivity.getDB();
+        String WHERE_CLAUSE = "isHidden = 0";
         Cursor cursor = db.query("dayOfCalorie",
                 null,
-                null,
-                null,
+                WHERE_CLAUSE,
+               null,
                 null, null, "day");
         if (cursor.moveToFirst()) {
             ArrayList<DataPoint> dataPointArrayList = new ArrayList<>();
