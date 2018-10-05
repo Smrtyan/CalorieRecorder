@@ -1,9 +1,11 @@
 package com.example.ubento.calorierecorder;
 
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,16 +31,27 @@ public class EditCaloriaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_caloria);
     }
-     void deleteDataFromTextViewAndDB(TextView tv){
-        LinearLayout layout = (LinearLayout) tv.getParent();
-        layout.removeView(tv);
-         db = MainActivity.getDB();
-         ContentValues values = new ContentValues();
-         values.put("isHidden",1);
-         String [] array = tv.getText().toString().split(" : ");
-         Toast.makeText(getApplicationContext(),array[0],Toast.LENGTH_LONG).show();
-         db.update("dayOfCalorie",values,"day = ? and calorie = ?",array);
-         db.close();
+     void deleteDataFromTextViewAndDB(final TextView tv){
+         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+         builder.setTitle("Warnings!");
+         builder.setMessage("Are you sure to delete this record?");
+         builder.setPositiveButton("yes",
+             (dialog, which) ->{
+                LinearLayout layout = (LinearLayout) tv.getParent();
+                layout.removeView(tv);
+                 db = MainActivity.getDB();
+                 ContentValues values = new ContentValues();
+                 values.put("isHidden",1);
+                 String [] array = tv.getText().toString().split(" : ");
+                 Toast.makeText(getApplicationContext(),array[0],Toast.LENGTH_LONG).show();
+                 db.update("dayOfCalorie",values,"day = ? and calorie = ?",array);
+                 db.close();
+             }
+         );
+         builder.setNegativeButton("no", (dialog,which)->{ });
+         AlertDialog dialog = builder.create();
+         dialog.show();
+
      }
     @Override
     protected void onResume() {
