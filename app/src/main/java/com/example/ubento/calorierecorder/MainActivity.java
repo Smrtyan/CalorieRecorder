@@ -153,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
 //        intent.putExtra("end_day",endDay);
 //        startActivity(intent);
         GraphView graph = (GraphView) findViewById(R.id.graph);
+        graph.removeAllSeries();
 
         Date date;
         db  = MainActivity.getDB();
