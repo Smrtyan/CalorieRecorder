@@ -18,7 +18,6 @@
         </activity>
         <activity android:name=".EditCaloriaActivity" />
         <activity android:name=".AddCaloriaActivity" />
-        <activity android:name=".QueryActivity"></activity>
     </application>
 
 </manifest>

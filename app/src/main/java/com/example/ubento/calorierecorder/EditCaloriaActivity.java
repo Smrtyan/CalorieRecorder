@@ -64,6 +64,9 @@ public class EditCaloriaActivity extends AppCompatActivity {
                 null,
                 null, null, "day");
         TextView textView;
+        View line;
+        LinearLayout.LayoutParams layoutParamsOfLine = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParamsOfLine.height = 3;
         LinearLayout linear = findViewById(R.id.ll);
         linear.removeAllViews();
         if (cursor.moveToFirst()) {
@@ -74,6 +77,8 @@ public class EditCaloriaActivity extends AppCompatActivity {
                 String calorie = cursor.getString(cursor.getColumnIndex("calorie"));
                 String day = cursor.getString(cursor.getColumnIndex("day"));
                 textView = new TextView(this);
+                line = new View(this);
+                line.setLayoutParams(layoutParamsOfLine);
                 textView.setText(day + " : " + calorie);
                 textView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
@@ -82,15 +87,16 @@ public class EditCaloriaActivity extends AppCompatActivity {
                         return true;
                     }
                 });
-           //     textView.setOnClickListener();
+
+                line.setBackgroundResource(R.color.colorPrimaryDark);
+                textView.setPadding(180,40,20,40);
+                linear.addView(line);
                 linear.addView(textView);
-
-
             }while(cursor.moveToNext());
             cursor.close();
             db.close();
-        }
 
+        }
     }
 
     public void btn_add(View view) {

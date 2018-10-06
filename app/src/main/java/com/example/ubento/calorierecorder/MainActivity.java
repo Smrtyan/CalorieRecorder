@@ -53,73 +53,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onResume() {
-
-        super.onResume();
-        GraphView graph = (GraphView) findViewById(R.id.graph);
-        graph.removeAllSeries();
-
-        Date d;
-        db  = MainActivity.getDB();
-        String WHERE_CLAUSE = "isHidden = 0";
-        Cursor cursor = db.query("dayOfCalorie",
-                null,
-                WHERE_CLAUSE,
-               null,
-                null, null, "day");
-        if (cursor.moveToFirst()) {
-            ArrayList<DataPoint> dataPointArrayList = new ArrayList<>();
-            try {
-                do {
-
-                    String calorie = cursor.getString(cursor.getColumnIndex("calorie"));
-                    String day= cursor.getString(cursor.getColumnIndex("day"));
-                    d = simpleDateFormat.parse(day);
-                    dataPointArrayList.add(new DataPoint(d,Integer.parseInt(calorie)));
-//                    Log.v("db-1",day);
-
-                } while (cursor.moveToNext());
-                cursor.close();
-                LineGraphSeries<DataPoint> series ;
-                DataPoint[] dp = new DataPoint[]{};
-                dp = dataPointArrayList.toArray(dp);
-                series = new LineGraphSeries<DataPoint>(dp);
-
-
-                graph.addSeries(series);
-
-// set date label formatter
-                graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(this));
-                graph.getGridLabelRenderer().setNumHorizontalLabels(dataPointArrayList.size()); // only 4 because of the space
-
-// set manual x bounds to have nice steps
-//                graph.getViewport().setMinX(d.getTime());
-//                graph.getViewport().setMaxX(d.getTime());
-                graph.getViewport().setXAxisBoundsManual(true);
-
-// as we use dates as labels, the human rounding to nice readable numbers
-// is not necessary
-                graph.getGridLabelRenderer().setHumanRounding(false);
-
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-        }
-        db.close();
-
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         dbHelper = new SimpleDBHelper(this, DB_VERSION);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-
-
-
 
         TextView tv;
         tv = (TextView)findViewById(R.id.tv_begin);
@@ -140,6 +77,61 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        String startDay,endDay;
+        startDay = "2018-10-01";
+        endDay = "2018-10-06";
+
+        GraphView graph = (GraphView) findViewById(R.id.graph);
+
+        Date date;
+        db  = MainActivity.getDB();
+        LineGraphSeries<DataPoint> series ;
+        DataPoint[] dataPoints = new DataPoint[]{};
+        String WHERE_CLAUSE = "day >= ? AND day <= ? AND isHidden = 0";
+        Cursor cursor = db.query("dayOfCalorie",
+                null,
+                WHERE_CLAUSE,
+                new String[]{
+                        startDay,endDay
+                },
+                null, null, "day");
+        if (cursor.moveToFirst()) {
+            ArrayList<DataPoint> dataPointArrayList = new ArrayList<>();
+            try {
+                do {
+
+                    String calorie = cursor.getString(cursor.getColumnIndex("calorie"));
+                    String day= cursor.getString(cursor.getColumnIndex("day"));
+                    date = simpleDateFormat.parse(day);
+                    dataPointArrayList.add(new DataPoint(date,Integer.parseInt(calorie)));
+                    Log.v("db-1",day);
+                } while (cursor.moveToNext());
+                dataPoints = dataPointArrayList.toArray(dataPoints);
+                series = new LineGraphSeries<>(dataPoints);
+                graph.addSeries(series);
+
+                graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(MainActivity.this));
+
+                graph.getGridLabelRenderer().setNumHorizontalLabels(dataPoints.length);
+
+                graph.getViewport().setMinX(simpleDateFormat.parse(startDay).getTime());
+                graph.getViewport().setMaxX(simpleDateFormat.parse(endDay).getTime());
+                graph.getViewport().setXAxisBoundsManual(true);
+
+                graph.getGridLabelRenderer().setHumanRounding(false);
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+                Log.e("graphView", "error");
+            }
+
+        }
+        cursor.close();
+        db.close();
+
+
+
+
 
 
     }
@@ -154,11 +146,64 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void query_click(View view) {
-        String statDay = ((TextView)findViewById(R.id.tv_begin)).getText().toString();
+        String startDay = ((TextView)findViewById(R.id.tv_begin)).getText().toString();
         String endDay = ((TextView)findViewById(R.id.tv_end)).getText().toString();
-        Intent intent = new Intent(this,QueryActivity.class);
-        intent.putExtra("start_day",statDay);
-        intent.putExtra("end_day",endDay);
-        startActivity(intent);
+//        Intent intent = new Intent(this,QueryActivity.class);
+//        intent.putExtra("start_day",statDay);
+//        intent.putExtra("end_day",endDay);
+//        startActivity(intent);
+        GraphView graph = (GraphView) findViewById(R.id.graph);
+
+        Date date;
+        db  = MainActivity.getDB();
+        LineGraphSeries<DataPoint> series ;
+        DataPoint[] dataPoints = new DataPoint[]{};
+        String WHERE_CLAUSE = "day >= ? AND day <= ? AND isHidden = 0";
+        Cursor cursor = db.query("dayOfCalorie",
+                null,
+                WHERE_CLAUSE,
+                new String[]{
+                        startDay,endDay
+                },
+                null, null, "day");
+        if (cursor.moveToFirst()) {
+            ArrayList<DataPoint> dataPointArrayList = new ArrayList<>();
+            try {
+                do {
+
+                    String calorie = cursor.getString(cursor.getColumnIndex("calorie"));
+                    String day= cursor.getString(cursor.getColumnIndex("day"));
+                    date = simpleDateFormat.parse(day);
+                    dataPointArrayList.add(new DataPoint(date,Integer.parseInt(calorie)));
+                    Log.v("db-1",day);
+                } while (cursor.moveToNext());
+                dataPoints = dataPointArrayList.toArray(dataPoints);
+                series = new LineGraphSeries<>(dataPoints);
+                graph.addSeries(series);
+
+                graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(MainActivity.this));
+
+                graph.getGridLabelRenderer().setNumHorizontalLabels(dataPoints.length);
+
+                graph.getViewport().setMinX(simpleDateFormat.parse(startDay).getTime());
+                graph.getViewport().setMaxX(simpleDateFormat.parse(endDay).getTime());
+                graph.getViewport().setXAxisBoundsManual(true);
+
+                graph.getGridLabelRenderer().setHumanRounding(false);
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+                Log.e("graphView", "error");
+            }
+
+        }
+        cursor.close();
+        db.close();
+
+
+
+
+
     }
+
 }
