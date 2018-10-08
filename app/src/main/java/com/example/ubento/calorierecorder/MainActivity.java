@@ -27,7 +27,7 @@ import java.util.Vector;
 
 public class MainActivity extends AppCompatActivity {
     private static SimpleDBHelper dbHelper;
-    public  final int DB_VERSION =3;
+    public  final int DB_VERSION =2;
     SQLiteDatabase db;
 
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
